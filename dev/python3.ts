@@ -1,6 +1,21 @@
 export const completionSpec: Fig.Spec = {
   name: "python3",
   description: "Run the python interpretor",
+  generateSpec: async (context, executeShellCommand) => {
+    const subcommands = [];
+
+    if (
+      (await executeShellCommand("cat manage.py | grep -q django; echo $?")) ===
+      "0"
+    ) {
+      subcommands.push({ name: "manage.py", loadSpec: "django-admin" });
+    }
+
+    return {
+      name: "python3",
+      subcommands,
+    };
+  },
   args: {
     name: "python script",
     isScript: true,
